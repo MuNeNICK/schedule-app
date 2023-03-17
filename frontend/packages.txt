@@ -1,0 +1,6 @@
+date-fns
+formik
+yup
+tailwindcss@latest
+postcss@latest
+autoprefixer@latest
