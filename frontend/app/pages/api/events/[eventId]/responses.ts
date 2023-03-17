@@ -1,22 +1,21 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { nanoid } from "nanoid";
+
+const responses = new Map<string, any>();
 
 export default function handler(
   req: NextApiRequest,
   res: NextApiResponse
-): void {
-  const eventId = req.query.eventId as string;
-  
-  if (req.method === "POST") {
-    const { name, availableDates } = req.body;
-    const responseId = nanoid();
-    events[eventId].responses[responseId] = {
-      name,
-      availableDates,
-    };
+) {
+  const { eventId } = req.query;
 
-    res.status(201).json({ id: responseId });
+  if (req.method === "POST") {
+    const response = req.body;
+    const eventResponses = responses.get(eventId as string) || [];
+    eventResponses.push(response);
+    responses.set(eventId as string, eventResponses);
+    res.status(201).json({ message: "回答が送信されました" });
   } else {
-    res.status(405).end(); // Method Not Allowed
+    res.setHeader("Allow", ["POST"]);
+    res.status(405).end(`Method ${req.method} Not Allowed`);
   }
 }

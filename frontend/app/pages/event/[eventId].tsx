@@ -1,5 +1,5 @@
 import React from "react";
-import { Formik, Form, Field, ErrorMessage, FormikHelpers } from "formik";
+import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as yup from "yup";
 import { useRouter } from "next/router";
 
@@ -23,13 +23,11 @@ const validationSchema = yup.object({
 
 export default function Event() {
   const router = useRouter();
-  const eventId = router.query.eventId as string | undefined;
+  const { eventId } = router.query;
   const [eventName, setEventName] = React.useState("");
   const [dates, setDates] = React.useState<string[]>([]);
 
   React.useEffect(() => {
-    if (!eventId) return;
-
     fetch(`/api/events/${eventId}`)
       .then((res) => res.json())
       .then((data) => {
@@ -43,7 +41,7 @@ export default function Event() {
 
   const handleSubmit = (
     values: FormValues,
-    { setSubmitting }: FormikHelpers<FormValues>
+    { setSubmitting }: { setSubmitting: (isSubmitting: boolean) => void }
   ) => {
     fetch(`/api/events/${eventId}/responses`, {
       method: "POST",
@@ -96,14 +94,14 @@ export default function Event() {
               />
               <ErrorMessage
                 name="name"
-                component="div"
+                component="            div"
                 className="text-red-500 text-sm mt-1"
               />
             </div>
             <div>
               <h3 className="font-semibold mb-2">利用可能な日付</h3>
               <div className="space-y-2">
-                {dates.map((date) => (
+                {dates.map((date, index) => (
                   <label key={date} className="flex items-center space-x-2">
                     <Field
                       type="checkbox"
