@@ -1,13 +1,46 @@
-import React from "react";
-import Link from "next/link";
+// pages/index.tsx
+import { useState } from 'react';
+import { useRouter } from 'next/router';
 
-export default function Home() {
+export default function Index() {
+  const [title, setTitle] = useState('');
+  const [selectedDates, setSelectedDates] = useState([]);
+  const router = useRouter();
+
+  const handleTitleChange = (e) => {
+    setTitle(e.target.value);
+  };
+
+  const handleDateSelect = (e) => {
+    const date = e.target.value;
+    if (selectedDates.includes(date)) {
+      setSelectedDates(selectedDates.filter((d) => d !== date));
+    } else {
+      setSelectedDates([...selectedDates, date]);
+    }
+  };
+
+  const handleSubmit = () => {
+    const query = {
+      title,
+      dates: selectedDates.join(','),
+    };
+    router.push({
+      pathname: '/answer',
+      query,
+    });
+  };
+
   return (
-    <div className="container mx-auto px-4 py-12">
-      <h1 className="text-4xl font-bold mb-8">調整さん風アプリ</h1>
-      <Link href="/event/create" className="bg-blue-600 text-white px-4 py-2 rounded">
-          新しいイベントを作成する
-      </Link>
+    <div>
+      <input
+        type="text"
+        placeholder="イベントタイトル"
+        value={title}
+        onChange={handleTitleChange}
+      />
+      <input type="date" onChange={handleDateSelect} />
+      <button onClick={handleSubmit}>作成</button>
     </div>
   );
 }
